@@ -4,6 +4,11 @@ import time
 import pickle
 import os
 from pathlib import Path
+import pdb
+
+def argsort(seq):
+    """Argsort using native Python"""
+    return [i for i,v in sorted(enumerate(seq), key = lambda x: x[1])]
 
 def get_alphanumeric_input():
     """Returns alphanumeric input from user."""
@@ -16,13 +21,13 @@ def get_alphanumeric_input():
 
 def get_menu_input():
     """Gets user selected menu item."""
-    valid_options = ['1', '2', '3', '4'] 
-    menu_item = '5' 
+    valid_options = ['1', '2', '3', '4', '5'] 
+    menu_item = '6' 
     while menu_item not in valid_options:
         menu_item = input("> ")
         if menu_item in valid_options:
             return menu_item
-        print("Sorry, enter a value of 1, 2, 3, or 4.")
+        print("Sorry, enter a value of 1, 2, 3, 4, or 5.")
 
 def get_typing_input(num_words, word_len, line):
     """Returns typing input."""
@@ -164,13 +169,18 @@ def practice_problem_chars():
             another_round = False
     os.system('cls||clear')
 
+def count_of_characters_tested(char_dict):
+    """Count the number of characters tested by this user so far."""
+    return sum([1 if v[1] > 0 else 0 for k, v in char_dict.items()])
+
 def graph_history(chars, char_dict):
     """Shows the percentage typing accuracy for each character."""
     os.system('cls||clear')
     small = 1e-6 # prevent dividing by zero
     print("\n" + " " * 15 + "Percent correctly typed for each character")
-    percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 2) * 100
+    percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 3) * 100
                 for c in chars]
+    worst3 = argsort(percents)[:3]
     thresholds = list(range(95, -5, -10))
     lines_graph = ["____"]
     for thresh in thresholds:
@@ -184,19 +194,32 @@ def graph_history(chars, char_dict):
         line = left + "".join(["|" if p >= thresh else " " for p in percents])
         lines_graph.append(line)
     lines_graph.append(left + "".join(chars))
-    for line in lines_graph:
-        print(line)
+    graph = "\n".join(line for line in lines_graph)
+    
+    #for line in lines_graph:
+    #    print(line)
+    print(graph)
+    num_tested = count_of_characters_tested(char_dict)
+    if num_tested < len(chars):
+        print("\nYou haven't typed all the characters yet.")
+        print("These are the results of the characters you've typed so far.")
+    print("\nYour worst 3 characters are:")
+    for i in worst3:
+        print("{0} {1:4.1f}%".format(chars[i], percents[i]))
+
     input("\nPress enter to return to the Menu. ") 
     os.system('cls||clear')
     
 def menu(chars, probs, char_dict, name):
     continue_typing = True 
     while continue_typing:
-        print("\nMenu:")
+        print("\nUser: {0}".format(name))
+        print("Menu:")
         print("1) General typing")
         print("2) Practice problematic characters")
         print("3) Graph historical typing accuracy")
-        print("4) Quit")
+        print("4) Change user")
+        print("5) Quit")
         menu_item = get_menu_input()
         if menu_item == '1':
             general_typing(chars, probs, char_dict, name) 
@@ -205,8 +228,11 @@ def menu(chars, probs, char_dict, name):
         if menu_item == '3':
             graph_history(chars, char_dict)
         if menu_item == '4':
+            return True 
+        if menu_item == '5':
             continue_typing = False
             print("Goodbye.")
+            return False
 
 def save_history(user, char_dict):
     """Saves the dictionary of results for this user."""
@@ -216,12 +242,13 @@ def save_history(user, char_dict):
         pickle.dump(char_dict, f)
         print("Your typing history has been saved.")
 
-
 if __name__ == '__main__':
-    name = login()  
-    chars, char_dict = init_chars(user=name)    
-    probs = make_probs(chars, char_dict)
-    menu(chars, probs, char_dict, name) 
-    
+    typing = True
+    while typing:
+        name = login()  
+        chars, char_dict = init_chars(user=name)    
+        probs = make_probs(chars, char_dict)
+        typing = menu(chars, probs, char_dict, name) 
+
 
 
