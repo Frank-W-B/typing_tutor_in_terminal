@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 def get_alphanumeric_input():
-    """Return alphanumeric input from user"""
+    """Returns alphanumeric input from user."""
     entry = '***'
     while not entry.isalnum():
         entry = input('> ')
@@ -15,7 +15,7 @@ def get_alphanumeric_input():
         print("Not alphanumeric, try again.")
 
 def get_menu_input():
-    """Gets user selected menu item"""
+    """Gets user selected menu item."""
     valid_options = ['1', '2', '3', '4'] 
     menu_item = '5' 
     while menu_item not in valid_options:
@@ -25,7 +25,7 @@ def get_menu_input():
         print("Sorry, enter a value of 1, 2, 3, or 4.")
 
 def get_typing_input(num_words, word_len, line):
-    """Returns typing input"""
+    """Returns typing input."""
     good_input = False
     while not good_input:
         print("\nType the following characters:\n\t{0}".format(line))
@@ -42,7 +42,7 @@ def get_typing_input(num_words, word_len, line):
         print("Incorrect number of words or word length. Re-enter line.")
 
 def get_practice_char_input():
-    """Gets individual characters to practice"""
+    """Gets individual characters to practice."""
     char_lengths = [2]
     while not all([cl == 1 for cl in char_lengths]):
         entry = input('> ')
@@ -62,7 +62,7 @@ def login():
     return name
     
 def init_chars(user):
-    """Makes the list of typing characters"""
+    """Makes the list of typing characters."""
     chars_to_type = (string.ascii_lowercase + string.digits 
                          + string.punctuation) 
     char_lst = [char for char in chars_to_type] 
@@ -90,7 +90,7 @@ def make_probs(char_lst, char_dict):
     return [round(prob / max_prob, 2) for prob in raw_probs]
 
 def number_correct_chars(typed_words, words, char_dict):
-    """Determine the number of characters typed correctly"""
+    """Determine the number of characters typed correctly."""
     number_correct = 0
     for typed_word, word in zip(typed_words, words):
         for i, letter in enumerate(word): 
@@ -111,7 +111,7 @@ def typing_round(chars, probs, char_dict, num_words, word_length):
     return number_correct, elapsed_time
 
 def show_typing_results(num_correct_in_round, time_for_round, total_chars):
-    """Displays general typing results"""
+    """Displays general typing results."""
     num_correct_chars = sum(num_correct_in_round) 
     accuracy = num_correct_chars / total_chars * 100
     total_time = sum(time_for_round)
@@ -122,8 +122,8 @@ def show_typing_results(num_correct_in_round, time_for_round, total_chars):
     print("Correct letters per second: {0:0.2f}".format(chars_per_sec))
 
 def general_typing(chars, probs, char_dict, name, 
-                   num_rounds=2, word_length=4, num_words=2):
-    """Tests typing accuracy"""
+                   num_rounds=3, word_length=5, num_words=5):
+    """Tests typing accuracy."""
     os.system('cls||clear')
     print("\nGeneral typing")
     print("\nType these characters as fast as reasonably possible.")
@@ -145,6 +145,7 @@ def general_typing(chars, probs, char_dict, name,
     os.system('cls||clear')
 
 def practice_problem_chars():
+    """Allows user to practice characters of choice."""
     os.system('cls||clear')
     print("\nPractice problematic characters.")
     print("Enter characters to practice, separated by a space.")
@@ -163,6 +164,31 @@ def practice_problem_chars():
             another_round = False
     os.system('cls||clear')
 
+def graph_history(chars, char_dict):
+    """Shows the percentage typing accuracy for each character."""
+    os.system('cls||clear')
+    small = 1e-6 # prevent dividing by zero
+    print("\n" + " " * 15 + "Percent correctly typed for each character")
+    percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 2) * 100
+                for c in chars]
+    thresholds = list(range(95, -5, -10))
+    lines_graph = ["____"]
+    for thresh in thresholds:
+        left = "    "
+        if thresh == 95:
+            left = "100%"
+        if thresh == 55:
+            left = "____"
+        if thresh == 45:
+            left = " 50%"
+        line = left + "".join(["|" if p >= thresh else " " for p in percents])
+        lines_graph.append(line)
+    lines_graph.append(left + "".join(chars))
+    for line in lines_graph:
+        print(line)
+    input("\nPress enter to return to the Menu. ") 
+    os.system('cls||clear')
+    
 def menu(chars, probs, char_dict, name):
     continue_typing = True 
     while continue_typing:
@@ -176,6 +202,8 @@ def menu(chars, probs, char_dict, name):
             general_typing(chars, probs, char_dict, name) 
         if menu_item == '2':
             practice_problem_chars()
+        if menu_item == '3':
+            graph_history(chars, char_dict)
         if menu_item == '4':
             continue_typing = False
             print("Goodbye.")
