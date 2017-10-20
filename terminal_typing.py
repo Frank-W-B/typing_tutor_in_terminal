@@ -14,28 +14,28 @@ def get_alphanumeric_input():
     """Returns alphanumeric input from user."""
     entry = '***'
     while not entry.isalnum():
-        entry = input('> ')
+        entry = input(' > ')
         if entry.isalnum():
             return entry
-        print("Not alphanumeric, try again.")
+        print(" Not alphanumeric, try again.")
 
 def get_menu_input():
     """Gets user selected menu item."""
     valid_options = ['1', '2', '3', '4', '5'] 
     menu_item = '6' 
     while menu_item not in valid_options:
-        menu_item = input("> ")
+        menu_item = input(" > ")
         if menu_item in valid_options:
             return menu_item
-        print("Sorry, enter a value of 1, 2, 3, 4, or 5.")
+        print(" Sorry, enter a value of 1, 2, 3, 4, or 5.")
 
 def get_typing_input(num_words, word_len, line):
     """Returns typing input."""
     good_input = False
     while not good_input:
-        print("\nType the following characters:\n\t{0}".format(line))
+        print("\n Type the following characters:\n\t{0}".format(line))
         start_time = time.time() 
-        typed_line = input("\t")
+        typed_line = input("\t ")
         elapsed_time = time.time() - start_time
         typed_words = typed_line.split(" ")
         num_typed = len(typed_words)
@@ -44,25 +44,25 @@ def get_typing_input(num_words, word_len, line):
         good_input = (num_typed == num_words and correct_wls)
         if good_input:
             return typed_words, elapsed_time
-        print("Incorrect number of words or word length. Re-enter line.")
+        print(" Incorrect number of words or word length. Re-enter line.")
 
 def get_practice_char_input():
     """Gets individual characters to practice."""
     char_lengths = [2]
     while not all([cl == 1 for cl in char_lengths]):
-        entry = input('> ')
+        entry = input(' > ')
         chars = entry.split(" ")
         char_lengths = list(map(len, chars))
         if all([cl == 1 for cl in char_lengths]):
             return chars
-        print("Incorrect character length. Re-enter line.")
+        print(" Incorrect character length. Re-enter line.")
 
 def login():
     """Gets user name so that progress can be loaded and saved."""
     os.system('cls||clear')
-    print("Welcome to Terminal Typing Practice")
-    print("Can I get your name please?")
-    print("(use alphanumeric values)")
+    print(" Welcome to Terminal Typing Practice")
+    print(" Can I get your name please?")
+    print(" (use alphanumeric values)")
     name = get_alphanumeric_input()
     return name
     
@@ -76,10 +76,10 @@ def init_chars(user):
     if filename.is_file():
         with open(filename, 'rb') as f:
             char_dict = pickle.load(f)
-            print("Your typing history has been loaded.")
+            print(" Your typing history has been loaded.")
     else:
         char_dict = {char: [0,0] for char in char_lst}  # init. correct, tested
-        print("New user created.") 
+        print(" New user created.") 
     return char_lst, char_dict
 
 def calc_prob(right, tested):
@@ -121,22 +121,22 @@ def show_typing_results(num_correct_in_round, time_for_round, total_chars):
     accuracy = num_correct_chars / total_chars * 100
     total_time = sum(time_for_round)
     chars_per_sec = num_correct_chars / total_time
-    print("\nResults")
-    print("Accuracy: {0:0.2f}%".format(accuracy))
-    print("Time elapsed: {0:0.1f} seconds.".format(total_time))
-    print("Correct letters per second: {0:0.2f}".format(chars_per_sec))
+    print("\n Results")
+    print(" Accuracy: {0:0.2f}%".format(accuracy))
+    print(" Time elapsed: {0:0.1f} seconds.".format(total_time))
+    print(" Correct letters per second: {0:0.2f}".format(chars_per_sec))
 
 def general_typing(chars, probs, char_dict, name, 
                    num_rounds=3, word_length=5, num_words=5):
     """Tests typing accuracy."""
     os.system('cls||clear')
-    print("\nGeneral typing")
-    print("\nType these characters as fast as reasonably possible.")
-    print("Do NOT backspace or delete to fix your mistakes.")
+    print("\n General typing")
+    print("\n Type these characters as fast as reasonably possible.")
+    print(" Do NOT backspace or delete to fix your mistakes.")
     num_correct_in_round = []
     time_for_round = []
     for rnd in range(num_rounds):
-        print("\nRound {0} of {1}".format(rnd+1, num_rounds))
+        print("\n Round {0} of {1}".format(rnd+1, num_rounds))
         number_correct, elapsed_time = typing_round(chars, probs, char_dict,
                                                     num_words, word_length)
         num_correct_in_round.append(number_correct)
@@ -146,14 +146,14 @@ def general_typing(chars, probs, char_dict, name,
     total_chars = word_length * num_words * num_rounds
     show_typing_results(num_correct_in_round, time_for_round, total_chars)
     save_history(name, char_dict)
-    input("Press enter to return to the Menu. ") 
+    input(" Press enter to return to the Menu. ") 
     os.system('cls||clear')
 
 def practice_problem_chars():
     """Allows user to practice characters of choice."""
     os.system('cls||clear')
-    print("\nPractice problematic characters.")
-    print("Enter characters to practice, separated by a space.")
+    print("\n Practice problematic characters.")
+    print(" Enter characters to practice, separated by a space.")
     chars = get_practice_char_input()
     num_words = 10 
     word_length = 5 
@@ -164,7 +164,7 @@ def practice_problem_chars():
             words.append("".join(random.choices(chars, k=word_length)))
         line = " ".join([word for word in words])
         typed_words, _  = get_typing_input(num_words, word_length, line)
-        entry = input("\nPractice again? (y/n): ")
+        entry = input("\n Practice again? (y/n): ")
         if entry not in ['y', 'Y']:
             another_round = False
     os.system('cls||clear')
@@ -177,49 +177,46 @@ def graph_history(chars, char_dict):
     """Shows the percentage typing accuracy for each character."""
     os.system('cls||clear')
     small = 1e-6 # prevent dividing by zero
-    print("\n" + " " * 15 + "Percent correctly typed for each character")
+    print("\n" + " " * 16 + "Percent correctly typed for each character")
     percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 3) * 100
                 for c in chars]
     worst3 = argsort(percents)[:3]
     thresholds = list(range(95, -5, -10))
-    lines_graph = ["____"]
+    lines_graph = [" ____"]
     for thresh in thresholds:
-        left = "    "
+        left = "     "
         if thresh == 95:
-            left = "100%"
+            left = " 100%"
         if thresh == 55:
-            left = "____"
+            left = " ____"
         if thresh == 45:
-            left = " 50%"
+            left = "  50%"
         line = left + "".join(["|" if p >= thresh else " " for p in percents])
         lines_graph.append(line)
     lines_graph.append(left + "".join(chars))
     graph = "\n".join(line for line in lines_graph)
-    
-    #for line in lines_graph:
-    #    print(line)
     print(graph)
     num_tested = count_of_characters_tested(char_dict)
     if num_tested < len(chars):
-        print("\nYou haven't typed all the characters yet.")
-        print("These are the results of the characters you've typed so far.")
-    print("\nYour worst 3 characters are:")
+        print("\n You haven't typed all the characters yet.")
+        print(" These are the results of the characters you've typed so far.")
+    print("\n Your worst 3 characters are:")
     for i in worst3:
-        print("{0} {1:4.1f}%".format(chars[i], percents[i]))
+        print(" {0} {1:4.1f}%".format(chars[i], percents[i]))
 
-    input("\nPress enter to return to the Menu. ") 
+    input("\n Press enter to return to the Menu. ") 
     os.system('cls||clear')
     
 def menu(chars, probs, char_dict, name):
     continue_typing = True 
     while continue_typing:
-        print("\nUser: {0}".format(name))
-        print("Menu:")
-        print("1) General typing")
-        print("2) Practice problematic characters")
-        print("3) Graph historical typing accuracy")
-        print("4) Change user")
-        print("5) Quit")
+        print("\n User: {0}".format(name))
+        print(" Menu:")
+        print(" 1) General typing")
+        print(" 2) Practice problematic characters")
+        print(" 3) Graph historical typing accuracy")
+        print(" 4) Change user")
+        print(" 5) Quit")
         menu_item = get_menu_input()
         if menu_item == '1':
             general_typing(chars, probs, char_dict, name) 
@@ -231,7 +228,7 @@ def menu(chars, probs, char_dict, name):
             return True 
         if menu_item == '5':
             continue_typing = False
-            print("Goodbye.")
+            print(" Goodbye.")
             return False
 
 def save_history(user, char_dict):
@@ -240,7 +237,7 @@ def save_history(user, char_dict):
     filename = Path(pickle_name)
     with open(filename, 'wb') as f:
         pickle.dump(char_dict, f)
-        print("Your typing history has been saved.")
+        print(" Your typing history has been saved, {0}.".format(name))
 
 if __name__ == '__main__':
     typing = True
