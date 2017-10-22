@@ -35,7 +35,7 @@ def get_typing_input(num_words, word_len, line):
     while not good_input:
         print("\n Type the following characters:\n\t{0}".format(line))
         start_time = time.time() 
-        typed_line = input("\t ")
+        typed_line = input("\t")
         elapsed_time = time.time() - start_time
         typed_words = typed_line.split(" ")
         num_typed = len(typed_words)
@@ -173,7 +173,20 @@ def count_of_characters_tested(char_dict):
     """Count the number of characters tested by this user so far."""
     return sum([1 if v[1] > 0 else 0 for k, v in char_dict.items()])
 
-def graph_history(chars, char_dict):
+def determine_scale(percents):
+    """Deterimes the min, max, and step for the graph"""
+    p_min = min(percents)
+    if p_min < 50: 
+        return 0, 100, 10
+    elif p_min < 80:
+        return 50, 100, 5
+    elif p_min < 90:
+        return 80, 100, 2
+    else:
+        return 90, 100, 1
+
+
+def graph_history(chars, char_dict, name):
     """Shows the percentage typing accuracy for each character."""
     os.system('cls||clear')
     small = 1e-6 # prevent dividing by zero
@@ -181,26 +194,31 @@ def graph_history(chars, char_dict):
     percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 3) * 100
                 for c in chars]
     worst3 = argsort(percents)[:3]
-    thresholds = list(range(95, -5, -10))
-    lines_graph = [" ____"]
-    for thresh in thresholds:
-        left = "     "
-        if thresh == 95:
-            left = " 100%"
-        if thresh == 55:
-            left = " ____"
-        if thresh == 45:
-            left = "  50%"
+    p_low, p_high, p_step = determine_scale(percents)
+    t_high = int(round(p_high - p_step/2, 0))
+    t_low = int(round(p_low - p_step/2, 0))
+    thresholds = list(range(t_high, t_low, -p_step))
+    lines_graph = [" ____ "]
+    for i, thresh in enumerate(thresholds):
+        left = "      "
+        if i == 0:
+            left = "{0:4d}% ".format(p_high)
+        if i == 4:
+            left = " ____ "
+        if i == 5:
+            left = "{0:4d}% ".format(int(round((p_high+p_low)/2,0)))
+        if i == 9:
+            left = " ____ "
         line = left + "".join(["|" if p >= thresh else " " for p in percents])
         lines_graph.append(line)
-    lines_graph.append(left + "".join(chars))
+    lines_graph.append("{0:4d}% ".format(p_low) + "".join(chars))
     graph = "\n".join(line for line in lines_graph)
     print(graph)
     num_tested = count_of_characters_tested(char_dict)
     if num_tested < len(chars):
         print("\n You haven't typed all the characters yet.")
         print(" These are the results of the characters you've typed so far.")
-    print("\n Your worst 3 characters are:")
+    print("\n {0}, your worst 3 characters are:".format(name))
     for i in worst3:
         print(" {0} {1:4.1f}%".format(chars[i], percents[i]))
 
@@ -223,7 +241,7 @@ def menu(chars, probs, char_dict, name):
         if menu_item == '2':
             practice_problem_chars()
         if menu_item == '3':
-            graph_history(chars, char_dict)
+            graph_history(chars, char_dict, name)
         if menu_item == '4':
             return True 
         if menu_item == '5':
