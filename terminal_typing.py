@@ -76,7 +76,7 @@ def init_chars(user):
     if filename.is_file():
         with open(filename, 'rb') as f:
             char_dict = pickle.load(f)
-            print(" Your typing history has been loaded.")
+            print(" {0}, your typing history has been loaded.".format(user))
     else:
         char_dict = {char: [0,0] for char in char_lst}  # init. correct, tested
         print(" New user created.") 
@@ -133,28 +133,34 @@ def general_typing(chars, probs, char_dict, name,
     print("\n General typing")
     print("\n Type these characters as fast as reasonably possible.")
     print(" Do NOT backspace or delete to fix your mistakes.")
-    num_correct_in_round = []
-    time_for_round = []
-    for rnd in range(num_rounds):
-        print("\n Round {0} of {1}".format(rnd+1, num_rounds))
-        number_correct, elapsed_time = typing_round(chars, probs, char_dict,
-                                                    num_words, word_length)
-        num_correct_in_round.append(number_correct)
-        time_for_round.append(elapsed_time)
-        probs = make_probs(chars, char_dict)
-    
-    total_chars = word_length * num_words * num_rounds
-    show_typing_results(num_correct_in_round, time_for_round, total_chars)
-    save_history(name, char_dict)
-    input(" Press enter to return to the Menu. ") 
+    keep_typing = True
+    while keep_typing:
+        num_correct_in_round = []
+        time_for_round = []
+        for rnd in range(num_rounds):
+            print("\n Round {0} of {1}".format(rnd+1, num_rounds))
+            number_correct, elapsed_time = typing_round(chars, probs, char_dict,
+                                                        num_words, word_length)
+            num_correct_in_round.append(number_correct)
+            time_for_round.append(elapsed_time)
+            probs = make_probs(chars, char_dict)
+        total_chars = word_length * num_words * num_rounds
+        show_typing_results(num_correct_in_round, time_for_round, total_chars)
+        save_history(name, char_dict)
+        entry = input("\n Type again? (y/n): ")
+        if entry not in ['y', 'Y']:
+            keep_typing = False
     os.system('cls||clear')
 
-def practice_problem_chars():
+def practice_problem_chars(problem_chars=None):
     """Allows user to practice characters of choice."""
     os.system('cls||clear')
     print("\n Practice problematic characters.")
-    print(" Enter characters to practice, separated by a space.")
-    chars = get_practice_char_input()
+    if problem_chars:
+        chars = problem_chars
+    else:
+        print(" Enter characters to practice, separated by a space.")
+        chars = get_practice_char_input()
     num_words = 10 
     word_length = 5 
     another_round = True
@@ -185,34 +191,44 @@ def determine_scale(percents):
     else:
         return 90, 100, 1
 
+def graph_left_border(i, p_high, p_low):
+    """Line-by-line string that defines left border of graph"""
+    if i == 0:
+        left = "{0:4d}% ".format(p_high)
+    elif i == 4:
+        left = " ____ "
+    elif i == 5:
+        left = "{0:4d}% ".format(int(round((p_high+p_low)/2,0)))
+    elif i == 9:
+        left = " ____ "
+    else:
+        left = "      "
+    return left
 
-def graph_history(chars, char_dict, name):
-    """Shows the percentage typing accuracy for each character."""
-    os.system('cls||clear')
-    small = 1e-6 # prevent dividing by zero
+def make_graph(percents):
+    """Makes the character percentage accuracy graph"""
     print("\n" + " " * 16 + "Percent correctly typed for each character")
-    percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 3) * 100
-                for c in chars]
-    worst3 = argsort(percents)[:3]
     p_low, p_high, p_step = determine_scale(percents)
     t_high = int(round(p_high - p_step/2, 0))
     t_low = int(round(p_low - p_step/2, 0))
     thresholds = list(range(t_high, t_low, -p_step))
     lines_graph = [" ____ "]
     for i, thresh in enumerate(thresholds):
-        left = "      "
-        if i == 0:
-            left = "{0:4d}% ".format(p_high)
-        if i == 4:
-            left = " ____ "
-        if i == 5:
-            left = "{0:4d}% ".format(int(round((p_high+p_low)/2,0)))
-        if i == 9:
-            left = " ____ "
+        left = graph_left_border(i, p_high, p_low)
         line = left + "".join(["|" if p >= thresh else " " for p in percents])
         lines_graph.append(line)
     lines_graph.append("{0:4d}% ".format(p_low) + "".join(chars))
     graph = "\n".join(line for line in lines_graph)
+    return graph
+
+def graph_history(chars, char_dict, name):
+    """Shows the percentage typing accuracy for each character."""
+    os.system('cls||clear')
+    small = 1e-6 # prevent dividing by zero
+    percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 3) * 100
+                for c in chars]
+    worst3 = argsort(percents)[:3]
+    graph = make_graph(percents)
     print(graph)
     num_tested = count_of_characters_tested(char_dict)
     if num_tested < len(chars):
@@ -221,13 +237,14 @@ def graph_history(chars, char_dict, name):
     print("\n {0}, your worst 3 characters are:".format(name))
     for i in worst3:
         print(" {0} {1:4.1f}%".format(chars[i], percents[i]))
-
-    input("\n Press enter to return to the Menu. ") 
+    entry = input("\n Would you like to practice them? (y/n) ") 
+    if entry in ['y', 'Y']:
+        practice_problem_chars([chars[i] for i in worst3])
     os.system('cls||clear')
     
 def menu(chars, probs, char_dict, name):
-    continue_typing = True 
-    while continue_typing:
+    """Selection menu""" 
+    while True:
         print("\n User: {0}".format(name))
         print(" Menu:")
         print(" 1) General typing")
@@ -245,7 +262,6 @@ def menu(chars, probs, char_dict, name):
         if menu_item == '4':
             return True 
         if menu_item == '5':
-            continue_typing = False
             print(" Goodbye.")
             return False
 
