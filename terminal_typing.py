@@ -126,11 +126,10 @@ def show_typing_results(num_correct_in_round, time_for_round, total_chars):
     print(" Time elapsed: {0:0.1f} seconds.".format(total_time))
     print(" Correct letters per second: {0:0.2f}".format(chars_per_sec))
 
-def general_typing(chars, probs, char_dict, name, 
-                   num_rounds=3, word_length=5, num_words=5):
+def typing(chars, probs, char_dict, name, num_rounds=3, word_length=5, num_words=5):
     """Tests typing accuracy."""
     os.system('cls||clear')
-    print("\n General typing")
+    print("\n Typing")
     print("\n Type these characters as fast as reasonably possible.")
     print(" Do NOT backspace or delete to fix your mistakes.")
     keep_typing = True
@@ -152,7 +151,7 @@ def general_typing(chars, probs, char_dict, name,
             keep_typing = False
     os.system('cls||clear')
 
-def practice_problem_chars(problem_chars=None):
+def practice_chars(problem_chars=None):
     """Allows user to practice characters of choice."""
     os.system('cls||clear')
     print("\n Practice problematic characters.")
@@ -221,7 +220,7 @@ def make_graph(percents):
     graph = "\n".join(line for line in lines_graph)
     return graph
 
-def graph_history(chars, char_dict, name):
+def plot_performance(chars, char_dict, name):
     """Shows the percentage typing accuracy for each character."""
     os.system('cls||clear')
     small = 1e-6 # prevent dividing by zero
@@ -247,18 +246,18 @@ def menu(chars, probs, char_dict, name):
     while True:
         print("\n User: {0}".format(name))
         print(" Menu:")
-        print(" 1) General typing")
-        print(" 2) Practice problematic characters")
-        print(" 3) Graph historical typing accuracy")
+        print(" 1) Type")
+        print(" 2) Practice characters")
+        print(" 3) Plot performance")
         print(" 4) Change user")
         print(" 5) Quit")
         menu_item = get_menu_input()
         if menu_item == '1':
-            general_typing(chars, probs, char_dict, name) 
+            typing(chars, probs, char_dict, name) 
         if menu_item == '2':
-            practice_problem_chars()
+            practice_chars()
         if menu_item == '3':
-            graph_history(chars, char_dict, name)
+            plot_performance(chars, char_dict, name)
         if menu_item == '4':
             return True 
         if menu_item == '5':
@@ -274,12 +273,12 @@ def save_history(user, char_dict):
         print(" Your typing history has been saved, {0}.".format(name))
 
 if __name__ == '__main__':
-    typing = True
-    while typing:
+    keep_typing = True
+    while keep_typing:
         name = login()  
         chars, char_dict = init_chars(user=name)    
         probs = make_probs(chars, char_dict)
-        typing = menu(chars, probs, char_dict, name) 
+        keep_typing = menu(chars, probs, char_dict, name) 
 
 
 
