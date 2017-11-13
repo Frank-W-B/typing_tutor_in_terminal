@@ -129,11 +129,11 @@ def show_typing_results(num_correct_in_round, time_for_round, total_chars):
 def typing(chars, probs, char_dict, name, num_rounds=3, word_length=5, num_words=5):
     """Tests typing accuracy."""
     os.system('cls||clear')
-    print("\n Typing")
-    print("\n Type these characters as fast as reasonably possible.")
-    print(" Do NOT backspace or delete to fix your mistakes.")
     keep_typing = True
     while keep_typing:
+        print("\n Typing")
+        print("\n Type these characters as fast as reasonably possible.")
+        print(" Do NOT backspace or delete to fix your mistakes.")
         num_correct_in_round = []
         time_for_round = []
         for rnd in range(num_rounds):
@@ -149,12 +149,12 @@ def typing(chars, probs, char_dict, name, num_rounds=3, word_length=5, num_words
         entry = input("\n Type again? (y/n): ")
         if entry not in ['y', 'Y']:
             keep_typing = False
-    os.system('cls||clear')
+        os.system('cls||clear')
 
 def practice_chars(problem_chars=None):
     """Allows user to practice characters of choice."""
     os.system('cls||clear')
-    print("\n Practice problematic characters.")
+    print("\n Practice characters")
     if problem_chars:
         chars = problem_chars
     else:
@@ -164,6 +164,7 @@ def practice_chars(problem_chars=None):
     word_length = 5 
     another_round = True
     while another_round:
+        os.system('cls||clear')
         words = []
         for _ in range(num_words):
             words.append("".join(random.choices(chars, k=word_length)))
@@ -238,7 +239,7 @@ def plot_performance(chars, char_dict, name):
         print(" {0} {1:4.1f}%".format(chars[i], percents[i]))
     entry = input("\n Would you like to practice them? (y/n) ") 
     if entry in ['y', 'Y']:
-        practice_problem_chars([chars[i] for i in worst3])
+        practice_chars([chars[i] for i in worst3])
     os.system('cls||clear')
     
 def menu(chars, probs, char_dict, name):
