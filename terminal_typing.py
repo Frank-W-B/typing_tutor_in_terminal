@@ -19,15 +19,17 @@ def get_alphanumeric_input():
             return entry
         print(" Not alphanumeric, try again.")
 
-def get_menu_input():
-    """Gets user selected menu item."""
-    valid_options = ['1', '2', '3', '4', '5'] 
-    menu_item = '6' 
-    while menu_item not in valid_options:
-        menu_item = input(" > ")
-        if menu_item in valid_options:
-            return menu_item
-        print(" Sorry, enter a value of 1, 2, 3, 4, or 5.")
+def get_input_from_list(valid_list):
+    """Gets user input from provided list"""
+    not_in_list = True
+    while not_in_list:
+        user_input = input(" > ")
+        if user_input in valid_list:
+            not_in_list = False
+        else:
+            print(" Sorry, invalid input.")
+    return user_input
+
 
 def get_typing_input(num_words, word_len, line):
     """Returns typing input."""
@@ -126,7 +128,7 @@ def show_typing_results(num_correct_in_round, time_for_round, total_chars):
     print(" Time elapsed: {0:0.1f} seconds.".format(total_time))
     print(" Correct letters per second: {0:0.2f}".format(chars_per_sec))
 
-def typing(chars, probs, char_dict, name, num_rounds=3, word_length=5, num_words=5):
+def typing(chars, probs, char_dict, name, num_rounds=5, word_length=5, num_words=5):
     """Tests typing accuracy."""
     os.system('cls||clear')
     keep_typing = True
@@ -252,7 +254,7 @@ def menu(chars, probs, char_dict, name):
         print(" 3) Plot performance")
         print(" 4) Change user")
         print(" 5) Quit")
-        menu_item = get_menu_input()
+        menu_item = get_input_from_list([str(i) for i in range(1,6)])
         if menu_item == '1':
             typing(chars, probs, char_dict, name) 
         if menu_item == '2':
