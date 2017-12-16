@@ -223,25 +223,25 @@ def make_graph(percents):
     graph = "\n".join(line for line in lines_graph)
     return graph
 
-def plot_performance(chars, char_dict, name):
+def plot_performance(chars, char_dict, name, num_worst = 5):
     """Shows the percentage typing accuracy for each character."""
     os.system('cls||clear')
     small = 1e-6 # prevent dividing by zero
     percents = [round(char_dict[c][0] / (char_dict[c][1] + small), 3) * 100
                 for c in chars]
-    worst3 = argsort(percents)[:3]
+    worst = argsort(percents)[:num_worst]
     graph = make_graph(percents)
     print(graph)
     num_tested = count_of_characters_tested(char_dict)
     if num_tested < len(chars):
         print("\n You haven't typed all the characters yet.")
         print(" These are the results of the characters you've typed so far.")
-    print("\n {0}, your worst 3 characters are:".format(name))
-    for i in worst3:
+    print("\n {0}, your worst {1} characters are:".format(name, num_worst))
+    for i in worst:
         print(" {0} {1:4.1f}%".format(chars[i], percents[i]))
     entry = input("\n Would you like to practice them? (y/n) ") 
     if entry in ['y', 'Y']:
-        practice_chars([chars[i] for i in worst3])
+        practice_chars([chars[i] for i in worst])
     os.system('cls||clear')
     
 def menu(chars, probs, char_dict, name):
