@@ -5,6 +5,7 @@ import pickle
 import os
 from pathlib import Path
 import pdb
+# this was added on dev branch
 
 def argsort(seq):
     """Argsort using native Python"""
@@ -29,7 +30,6 @@ def get_input_from_list(valid_list):
         else:
             print(" Sorry, invalid input.")
     return user_input
-
 
 def get_typing_input(num_words, word_len, line):
     """Returns typing input."""
