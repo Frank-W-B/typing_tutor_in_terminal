@@ -1,8 +1,6 @@
 import string
 import pickle
 from pathlib import Path
-import pdb
-
 
 class Typist(object):
     '''Saves preferences and statistics associated with a typist in the
