@@ -11,43 +11,41 @@ class Typist(object):
     def __init__(self, username):
         self.username = username
         self.filename = Path(''.join([username, '.pkl']))
-        self.char_dict = self._get_char_dict()
-        #self.rate = _get_rate()
-        #self.preferences = _get_preferences()
+        self._set_attributes()
 
-
-    def _get_char_dict(self):
-        '''if user already exists load their number correct, tested dict'''
+    def _set_attributes(self):
+        '''if user already exists set their attributes'''
         if self.filename.is_file():
             with open(self.filename, 'rb') as f:
                 User = pickle.load(f)
-                print(" {0}'s typing history has been loaded.".format(username))
-                return User.char_dict
+                self.char_dict = User.char_dict
+                self.rate = User.rate
+                self.preferences = User.preferences
+                print(" {0}'s history has been loaded.".format(username))
         else:
-            '''initialize number correct, tested for a new typist'''
+            '''for new user set defaults'''
             chars_to_type = (string.ascii_lowercase + string.digits 
                              +  string.punctuation) 
             char_lst = [char for char in chars_to_type] 
+            self.char_dict = {char: [0,0] for char in char_lst}
+            self.rate = []
+            self.preferences = {'num_words'  : 5,
+                                'word_length': 5,
+                                'num_rounds' : 5,
+                                'num_worst'  : 5}
             print(" New user created.") 
-            return {char: [0,0] for char in char_lst}  
-
+    
     def save(self):
         '''pickles the Typist object'''
-        self.char_dict['a'][1] += 1
         with open(self.filename, 'wb') as outfile:
             pickle.dump(self, outfile)
         
 
-
 if __name__ == '__main__':
     username = 'greyfalcon'
-    User = Typist(username)
-    char_dict = '\n'.join(['{0} {1}'.format(k, v) for k, v in User.char_dict.items()])
-    print("After created") 
-    print(char_dict)
-    User.save()
+    User1 = Typist(username)
+    User1.save()
+    print("User1 created.") 
     User2 = Typist(username)
-    char_dict2 = '\n'.join(['{0} {1}'.format(k, v) for k, v in User2.char_dict.items()])
-    print("\nAfter loaded")
-    print(char_dict2)
-
+    User2.save()
+    print("User2 created.") 
