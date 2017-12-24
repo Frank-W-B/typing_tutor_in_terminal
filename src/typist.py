@@ -64,7 +64,7 @@ class Typist(object):
         '''pickles the Typist object'''
         with open(self.filename, 'wb') as outfile:
             pickle.dump(self, outfile)
-        print(' Typing history saved.')        
+        print('\n Typing history and preferences saved.')        
 
 if __name__ == '__main__':
     username = 'greyfalcon'
