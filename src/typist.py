@@ -17,13 +17,13 @@ class Typist(object):
         '''if user already exists set their attributes'''
         if self.filename.is_file():
             with open(self.filename, 'rb') as f:
-                User = pickle.load(f)
-                self.char_dict = User.char_dict
-                self.rate = User.rate
-                self.preferences = User.preferences
+                user = pickle.load(f)
+                self.char_dict = user.char_dict
+                self.rate = user.rate
+                self.pref = user.pref
                 self.chars = ''.join([k for k,v in self.char_dict.items()])
-                self.probs = User.probs
-                print(" {0}'s history has been loaded.".format(username))
+                self.probs = user.probs
+                print(" {0}'s history has been loaded.".format(self.username))
         else:
             '''for new user initialize values'''
             num_corr = 0  # number times typed corrected
@@ -34,10 +34,10 @@ class Typist(object):
             self.probs = [prob_char] * len(chars)
             self.char_dict = OrderedDict(char_lst)
             self.rate = []
-            self.preferences = {'num_words'  : 5,
-                                'word_length': 5,
-                                'num_rounds' : 5,
-                                'num_worst'  : 5}
+            self.pref = {'num_words'  : 5,
+                         'word_length': 5,
+                         'num_rounds' : 5,
+                         'num_worst'  : 5}
             print(" New user created.") 
    
     def update_probs(self):
@@ -64,7 +64,7 @@ class Typist(object):
         '''pickles the Typist object'''
         with open(self.filename, 'wb') as outfile:
             pickle.dump(self, outfile)
-        
+        print(' Typing history saved.')        
 
 if __name__ == '__main__':
     username = 'greyfalcon'

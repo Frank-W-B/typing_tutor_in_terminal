@@ -1,16 +1,3 @@
-import string
-import random
-import time
-import pickle
-import os
-from pathlib import Path
-import pdb
-# this was added on dev branch
-
-def count_of_characters_tested(char_dict):
-    """Count the number of characters tested by this user so far."""
-    return sum([1 if v[1] > 0 else 0 for k, v in char_dict.items()])
-
 def determine_scale(percents):
     """Deterimes the min, max, and step for the graph"""
     p_min = min(percents)
@@ -37,7 +24,7 @@ def graph_left_border(i, p_high, p_low):
         left = "      "
     return left
 
-def make_graph(percents):
+def make_graph(user, percents):
     """Makes the character percentage accuracy graph"""
     print("\n" + " " * 16 + "Percent correctly typed for each character")
     p_low, p_high, p_step = determine_scale(percents)
@@ -49,10 +36,6 @@ def make_graph(percents):
         left = graph_left_border(i, p_high, p_low)
         line = left + "".join(["|" if p >= thresh else " " for p in percents])
         lines_graph.append(line)
-    lines_graph.append("{0:4d}% ".format(p_low) + "".join(chars))
+    lines_graph.append("{0:4d}% ".format(p_low) + user.chars)
     graph = "\n".join(line for line in lines_graph)
     return graph
-
-
-
-
