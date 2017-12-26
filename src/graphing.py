@@ -1,84 +1,59 @@
-def determine_scale(percents):
-    """Deterimes the min, max, and step for the graph"""
-    p_min = min(percents)
-    if p_min < 50: 
-        return 0, 100, 10
-    elif p_min < 80:
-        return 50, 100, 5
-    elif p_min < 90:
-        return 80, 100, 2
-    elif p_min < 95:
-        return 90, 100, 1
-    else: 
-        return 95, 100, 0.5
+def determine_scale(values):
+    """Determines labels and interval for plot"""
+    all_values_same = False
+    top = max(values)
+    bottom = min(values)
+    if top == bottom:
+        all_values_same = True
+    mid = (top + bottom) / 2
+    interval = (top - bottom) / 10
+    return (top, mid, bottom), interval, all_values_same
 
-def scale_label(p_high, p_low, percent):
-    val_f = round((p_high + p_low) / 2, 1)
-    val_int = int(val_f)
-    if percent:
-        if val_int == val_f:
-            return "{0:4d}% ".format(val_int)
-        else:
-            return "{0}% ".format(val_f)
+def axis_label(label, type_plot):
+    if type_plot == "accuracy":
+        return "{0:5.1f}% ".format(label)
     else:
-        if val_int == val_f:
-            return " {0:4d} ".format(val_int)
-        else:
-            return " {0} ".format(val_f)
+        return " {0:5.2f} ".format(label)
 
-def graph_left_border(i, p_high, p_low, percent=True):
+def graph_left_border(i, labels, type_plot):
     """Line-by-line string that defines left border of graph"""
     if i == 0:
-        left = scale_label(p_high, p_high, percent)
-    elif i == 4:
-        left = " ____ "
+        left = axis_label(labels[0], type_plot)
+    elif i == 4 or i == 9:
+        left = "______ "
     elif i == 5:
-        left = scale_label(p_high, p_low, percent)
-    elif i == 9:
-        left = " ____ "
+        left = axis_label(labels[1], type_plot)
     else:
-        left = "      "
+        left = "       "
     return left
 
-def plot_graphing_accuracy(user, percents):
-    """Makes the character percentage accuracy graph"""
-    print("\n" + " " * 16 + "Percent correctly typed for each character")
-    p_low, p_high, p_step = determine_scale(percents)
-    t_high = p_high - p_step/2
-    t_low = p_low - p_step/2
-    thresholds = [t_high - i * p_step for i in range(10)]
-    lines_graph = [" ____ "]
-    for i, thresh in enumerate(thresholds):
-        left = graph_left_border(i, p_high, p_low)
-        line = left + "".join(["|" if p >= thresh else " " for p in percents])
-        lines_graph.append(line)
-    #lines_graph.append("{0:4d}% ".format(p_low) + user.chars)
-    lines_graph.append(scale_label(p_low, p_low, True) + user.chars)
-    graph = "\n".join(line for line in lines_graph)
-    return graph
-
-def plot_char_per_s(user):
-    """Plots the correct characters per second"""
-    print("\n" + " " * 16 + "   Correct characters typed per second")
-    plot_w = 70
-    rates = user.rate
-    if len(rates) > plot_w:
-        over = len(rates) - plot_w
-        rates = rates[over:]
-    min_cps = min(rates)
-    max_cps = max(rates)
-    intvl = (max_cps - min_cps) / 9
-    min_graph = round(min_cps - intvl / 2, 1)
-    max_graph = round(max_cps + intvl / 2, 1)
-    bins = [(max_graph - i*intvl, max_graph - (i+1)*intvl) for i in range(10)]
-    lines_graph = [" ____ "]
-    for i in range(10):
-        left = graph_left_border(i, max_graph, min_graph, percent=False)
-        line = left + "".join(["*" if (cps <= bins[i][0] and cps > bins[i][1])
-                               else " " for cps in rates])
-        lines_graph.append(line)
-    lines_graph.append(scale_label(min_graph, min_graph, percent=False) +
-                       " " * 16 + " Most recent typing results ->") 
-    graph = "\n".join(line for line in lines_graph)
-    return graph
-
+def create_plot(user, values, type_plot="accuracy"):
+    """Creates plot in terminal of either the user's typing accuracy per
+       character (type_plot = 'accuracy') or the user's speed (type_plot
+       = cchar_pers) """
+    if values:
+        labels, interval, all_values_same = determine_scale(values)
+        top, mid, bottom = labels
+        if all_values_same:
+            val = round(values[0], 2)
+            if type_plot == "accuracy":
+                return "\n The typing accuracy of all characters is {0}%.".format(val)
+            else:
+                return "\n  The correct char. typing rate is {0} chars. per second".\
+                       format(val)
+        lines_graph =  ["______"]
+        for i in range(10):    
+            threshold = top - interval/2 - i * interval     
+            left = graph_left_border(i, labels, type_plot)
+            line = left + "".join(["|" if v >= threshold else " " for v in values])
+            lines_graph.append(line)
+        last_line = axis_label(bottom, type_plot)
+        if type_plot == "accuracy":
+            last_line += user.chars
+        else:
+            last_line += " " * 16 + "<- Most recent typing results" 
+        lines_graph.append(last_line)
+        graph = "\n".join(line for line in lines_graph)
+        return graph
+    else:
+        return(" No values yet to plot.")

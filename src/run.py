@@ -61,15 +61,18 @@ def practice_chars(user, problem_chars=None):
 def plot_performance(user):
     """Shows the percentage typing accuracy for each character."""
     os.system('cls||clear')
-    small = 1e-6 # prevent dividing by zero
-    percents = [round(user.char_dict[c][0] / (user.char_dict[c][1] + small),3) 
-                * 100 for c in user.char_dict.keys()]
-    worst = helpers.argsort(percents)[:user.pref['num_worst']]
-    char_per_s_plot = graphing.plot_char_per_s(user) 
-    print(char_per_s_plot)
-    print("\n")
-    accuracy_plot = graphing.plot_graphing_accuracy(user, percents)
-    print(accuracy_plot)
+    print(" {0}'s performance".format(user.username))
+    print("\n" + " " * 16 + "   Correct characters typed per second")
+    values = user.rate[::-1][:68]  # correct characters per second
+    plot = graphing.create_plot(user, values, type_plot="cchar_pers")
+    print(plot)
+    print("\n" + " " * 16 + "Percent correctly typed for each character")
+    small = 1e-6
+    values = [user.char_dict[c][0] / (user.char_dict[c][1] + small) * 100 
+              for c in user.char_dict.keys()]
+    worst = helpers.argsort(values)[:user.pref['num_worst']]
+    plot = graphing.create_plot(user, values, type_plot="accuracy")
+    print(plot)
     all_tested = helpers.check_if_all_characters_tested(user)
     if not all_tested:
         print("\n You haven't typed all the characters yet.")
@@ -77,7 +80,7 @@ def plot_performance(user):
     print("\n {0}, your worst {1} characters are:".format(name, 
                                                           user.pref['num_worst']))
     for i in worst:
-        print(" {0} {1:4.1f}%".format(user.chars[i], percents[i]))
+        print(" {0} {1:4.1f}%".format(user.chars[i], values[i]))
     entry = input("\n Would you like to practice them? (y/n) ") 
     if entry in ['y', 'Y']:
         practice_chars(user, [chars[i] for i in worst])
