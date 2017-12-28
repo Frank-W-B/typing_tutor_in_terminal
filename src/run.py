@@ -77,13 +77,13 @@ def plot_performance(user):
     if not all_tested:
         print("\n You haven't typed all the characters yet.")
         print(" These are the results of the characters you've typed so far.")
-    print("\n {0}, your worst {1} characters are:".format(name, 
+    print("\n {0}, your worst {1} characters are:".format(user.username, 
                                                           user.pref['num_worst']))
     for i in worst:
         print(" {0} {1:4.1f}%".format(user.chars[i], values[i]))
     entry = input("\n Would you like to practice them? (y/n) ") 
     if entry in ['y', 'Y']:
-        practice_chars(user, [chars[i] for i in worst])
+        practice_chars(user, [user.chars[i] for i in worst])
     os.system('cls||clear')
 
 def change_preferences(user):
@@ -147,7 +147,7 @@ def menu(user):
             print(" Goodbye.")
             return False
 
-if __name__ == '__main__':
+def main():
     chars = helpers.make_vocabulary([string.ascii_lowercase,
                                      string.digits,
                                      string.punctuation])
@@ -156,3 +156,6 @@ if __name__ == '__main__':
         name = helpers.login()
         user = Typist(name, chars)
         keep_typing = menu(user) 
+
+if __name__ == '__main__':
+    main()
