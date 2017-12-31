@@ -11,20 +11,20 @@ def determine_scale(values):
 
 def axis_label(label, type_plot):
     if type_plot == "accuracy":
-        return "{0:5.1f}% ".format(label)
+        return " {0:5.1f}% ".format(label)
     else:
-        return " {0:5.2f} ".format(label)
+        return "  {0:5.2f} ".format(label)
 
 def graph_left_border(i, labels, type_plot):
     """Line-by-line string that defines left border of graph"""
     if i == 0:
         left = axis_label(labels[0], type_plot)
     elif i == 4 or i == 9:
-        left = "______ "
+        left = " ______ "
     elif i == 5:
         left = axis_label(labels[1], type_plot)
     else:
-        left = "       "
+        left = "        "
     return left
 
 def create_plot(user, values, type_plot="accuracy"):
@@ -41,7 +41,7 @@ def create_plot(user, values, type_plot="accuracy"):
             else:
                 return "\n  The correct char. typing rate is {0} chars. per second".\
                        format(val)
-        lines_graph =  ["______"]
+        lines_graph =  [" ______"]
         for i in range(10):    
             threshold = top - interval/2 - i * interval     
             left = graph_left_border(i, labels, type_plot)
