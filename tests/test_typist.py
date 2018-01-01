@@ -19,7 +19,7 @@ class TestTypist(unittest.TestCase):
         chars = [char for char in chars_str]
         self.username = username
         self.typist = Typist(username, chars)
-        self.path = Path(''.join([self.username, '.pkl']))
+        self.path = Path(''.join(['../users/', self.username, '.pkl']))
 
     def test_init(self):
         self.assertEqual(self.typist.username, self.username)

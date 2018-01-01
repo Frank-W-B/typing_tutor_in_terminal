@@ -39,7 +39,7 @@ def create_plot(user, values, type_plot="accuracy"):
             if type_plot == "accuracy":
                 return "\n The typing accuracy of all characters is {0}%.".format(val)
             else:
-                return "\n  The correct char. typing rate is {0} chars. per second".\
+                return "\n  The correct char. typing rate is {0} chars. per second.".\
                        format(val)
         lines_graph =  [" ______"]
         for i in range(10):    

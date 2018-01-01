@@ -79,10 +79,7 @@ def plot_performance(user):
         print(" These are the results of the characters you've typed so far.")
     print("\n {0}, your worst {1} characters are:".format(user.username, 
                                                           user.pref['num_worst']))
-    #for i in worst:
-    #    print(" {0} {1:4.1f}%".format(user.chars[i], values[i]))
-    
-    print(" ".join([" {0} {1:4.1f}% ".format(user.chars[i], values[i])
+    print(" ".join([" {0}: {1:4.1f}% ".format(user.chars[i], values[i])
           for i in worst]))
     entry = input("\n Would you like to practice them? (y/n) ") 
     if entry in ['y', 'Y']:
