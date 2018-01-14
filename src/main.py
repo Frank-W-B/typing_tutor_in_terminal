@@ -4,9 +4,10 @@ import os
 import helpers
 import graphing
 from typist import Typist
+import pdb
 
 def typing(user):
-    """Tests typing accuracy."""
+    """Tests typing on characters accuracy."""
     os.system('cls||clear')
     keep_typing = True
     while keep_typing:
@@ -29,6 +30,47 @@ def typing(user):
         user.rate.append(chars_per_sec)
         user.save()
         helpers.show_typing_results(accuracy, chars_per_sec)
+        entry = input("\n Type again? (y/n): ")
+        if entry not in ['y', 'Y']:
+            keep_typing = False
+        os.system('cls||clear')
+
+def typing_python(user, python):
+    """Tests typing on Python accuracy."""
+    os.system('cls||clear')
+    keep_typing = True
+    while keep_typing:
+        print("\n Typing")
+        print("\n Type this Python snippet as fast as reasonably possible.") 
+        print(" Do NOT backspace or delete to fix your mistakes.")
+        entries = range(max(python))
+        num_lines_min = 12
+        possible_entries = random.sample(entries, 6)
+        lines_code = []
+        for entry in possible_entries:
+            for code_line in python[entry][1]:
+                lines_code.append(code_line.rstrip('\n'))
+            if len(lines_code) > num_lines_min:
+                break
+        #code_lst = python[chosen_entry[0]][1]
+        code = '\n'.join(["{0:3d} ".format(i) + code for i, code in enumerate(lines_code[:-1])])
+        print('\n' + code)
+        num_correct_in_round = []
+        time_for_round = []
+        #for rnd in range(user.pref['num_rounds']):
+        #    print("\n Round {0} of {1}".format(rnd+1, user.pref['num_rounds']))
+        #    number_correct, elapsed_time = helpers.typing_round(user)
+        #    num_correct_in_round.append(number_correct)
+        #    time_for_round.append(elapsed_time)
+        #num_correct_chars = sum(num_correct_in_round)
+        #total_chars = (user.pref['word_length'] * user.pref['num_words'] * 
+        #               user.pref['num_rounds'])
+        #accuracy = num_correct_chars / total_chars * 100
+        #total_time = sum(time_for_round)
+        #chars_per_sec = num_correct_chars / total_time
+        #user.rate.append(chars_per_sec)
+        #user.save()
+        #helpers.show_typing_results(accuracy, chars_per_sec)
         entry = input("\n Type again? (y/n): ")
         if entry not in ['y', 'Y']:
             keep_typing = False
@@ -121,29 +163,32 @@ def change_preferences(user):
             adjust_preferences = False
             os.system('cls||clear')
 
-def menu(user):
+def menu(user, python):
     """Selection menu""" 
     while True:
         print("\n User: {0}".format(user.username))
         print(" Menu:")
-        print(" 1) Type")
-        print(" 2) Practice characters")
-        print(" 3) Plot performance")
-        print(" 4) Change user preferences")
-        print(" 5) Change user")
-        print(" 6) Quit")
-        menu_item = helpers.get_input_from_list([str(i) for i in range(1,7)])
+        print(" 1) Type characters")
+        print(" 2) Type Python")
+        print(" 3) Practice characters")
+        print(" 4) Plot performance")
+        print(" 5) Change user preferences")
+        print(" 6) Change user")
+        print(" 7) Quit")
+        menu_item = helpers.get_input_from_list([str(i) for i in range(1,8)])
         if menu_item == '1':
             typing(user) 
         if menu_item == '2':
-            practice_chars(user)
+            typing_python(user, python)
         if menu_item == '3':
-            plot_performance(user)
+            practice_chars(user)
         if menu_item == '4':
-            change_preferences(user)
+            plot_performance(user)
         if menu_item == '5':
-            return True 
+            change_preferences(user)
         if menu_item == '6':
+            return True 
+        if menu_item == '7':
             print(" Goodbye.")
             return False
 
@@ -152,11 +197,12 @@ def main():
     chars = helpers.make_vocabulary([string.ascii_lowercase,
                                      string.digits,
                                      string.punctuation])
+    python = helpers.read_python_code('itertools_code.py') 
     keep_typing = True
     while keep_typing:
         name = helpers.login()
         user = Typist(name, chars)
-        keep_typing = menu(user) 
+        keep_typing = menu(user, python) 
 
 if __name__ == '__main__':
     main()
