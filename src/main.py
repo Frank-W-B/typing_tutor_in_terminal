@@ -44,16 +44,12 @@ def typing_python(user, python):
         print("\n Type this Python snippet as fast as reasonably possible.") 
         print(" Do NOT backspace or delete to fix your mistakes.")
         entries = range(max(python))
-        num_lines_min = 12
-        possible_entries = random.sample(entries, 6)
-        lines_code = []
-        for entry in possible_entries:
-            for code_line in python[entry][1]:
-                lines_code.append(code_line.rstrip('\n'))
-            if len(lines_code) > num_lines_min:
-                break
-        #code_lst = python[chosen_entry[0]][1]
-        code = '\n'.join(["{0:3d} ".format(i) + code for i, code in enumerate(lines_code[:-1])])
+        num_lines_desired = user.pref['lines_python'] 
+        ss_entries = random.sample(entries, 10)
+        lines_code = [line.strip('\n') for e in ss_entries for line in python[e][1]]
+        lines_code = lines_code[:num_lines_desired]
+        code = '\n'.join(["{0:3d} ".format(i) + code for i, code in 
+                          enumerate(lines_code, 1)])
         print('\n' + code)
         num_correct_in_round = []
         time_for_round = []
@@ -140,11 +136,16 @@ def change_preferences(user):
         print(" 3) Word length: {0}".format(user.pref['word_length']))
         print(" 4) Number of worst characters to display & practice: {0}".
               format(user.pref['num_worst']))
-        print(" Valid values are from 1-10 for each preference.")
+        print(" 5) Number of lines of python to type: {0}".
+              format(user.pref['lines_python']))
+        print(" Valid values are from 1-10 for options 1 through 4.")
+        print(" You can type 1-25 lines of Python.")
+
         print("\n Which preference would like to change?")
-        print(" Enter '5' to exit.")
-        selection = helpers.get_input_from_list([str(i) for i in range(1,6)])
-        valid_vals = [str(i) for i in range(1,11)]
+        print(" Enter '6' to exit.")
+        selection = helpers.get_input_from_list([str(i) for i in range(1,7)])
+        valid_vals = [str(i) for i in range(1, 11)]
+        valid_python = [str(i) for i in range(1, 26)]
         if selection == '1':
             print(" New value for number of rounds:")
             user.pref['num_rounds'] = int(helpers.get_input_from_list(valid_vals))
@@ -157,9 +158,12 @@ def change_preferences(user):
         if selection == '4':
             print(" New value for number of worst characters to display:")
             user.pref['num_worst'] = int(helpers.get_input_from_list(valid_vals))
-        if selection in ['1', '2', '3', '4']:
-            user.save()
         if selection == '5':
+            print(" New value for lines of Python to type:")
+            user.pref['lines_python'] = int(helpers.get_input_from_list(valid_python))
+        if selection in ['1', '2', '3', '4', '5']:
+            user.save()
+        if selection == '6':
             adjust_preferences = False
             os.system('cls||clear')
 

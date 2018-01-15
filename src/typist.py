@@ -34,10 +34,11 @@ class Typist(object):
             self.probs = [prob_char] * len(chars)
             self.char_dict = OrderedDict(char_lst)
             self.rate = []
-            self.pref = {'num_words'  : 5,
-                         'word_length': 5,
-                         'num_rounds' : 5,
-                         'num_worst'  : 5}
+            self.pref = {'num_words'   : 5,
+                         'word_length' : 5,
+                         'num_rounds'  : 5,
+                         'num_worst'   : 5,
+                         'lines_python': 15}
             print(" New user created.") 
    
     def update_probs(self):
