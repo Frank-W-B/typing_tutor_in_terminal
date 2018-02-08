@@ -1,3 +1,5 @@
+## from itertools.py
+
 def accumulate(iterable, func=operator.add):
     'Return running totals'
     # accumulate([1,2,3,4,5]) --> 1 3 6 10 15
@@ -458,4 +460,30 @@ def random_combination_with_replacement(iterable, r):
 def dotproduct(vec1, vec2, sum=sum, map=map, mul=operator.mul):
     return sum(map(mul, vec1, vec2))
 
+## from the python-guide.org
 
+def make_complex(x, y):
+    return {'x': x, 'y': y}
+
+def one_statement_per_line(x):
+    print('one')
+    print('two')
+    if x == 1:
+        print('one')
+    cond1 = <complex comparison>
+    cond2 = <other complex comparison>
+    if cond1 and cond2:
+        # do something
+
+def unpacking_examples():
+    for index, item in enumerate(some_list):
+        # do something with index and item
+    # to swap variables:
+    a, b = b, a
+    # nested unpacking
+    a, (b, c) = 1, (2, 3)
+    # extended unpacking
+    a, *rest = [1, 2, 3]
+    
+def create_nlengthlist(n):
+    four_nones = [None] * n

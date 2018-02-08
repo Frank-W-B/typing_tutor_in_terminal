@@ -8,6 +8,8 @@ def read_python_code(fname):
         num_entry_lines = 0
         line_previous = ''
         for line in f:
+            if line[0] == '#' and line[1] == '#':
+                continue
             if line == '\n' and line_previous == '\n':
                 code_dict[entry_num] = [num_entry_lines, entry_code]
                 entry_num += 1  

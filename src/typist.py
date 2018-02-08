@@ -36,9 +36,9 @@ class Typist(object):
             self.rate = []
             self.pref = {'num_words'   : 5,
                          'word_length' : 5,
-                         'num_rounds'  : 5,
+                         'num_rounds'  : 3,
                          'num_worst'   : 5,
-                         'lines_python': 15}
+                         'lines_python': 3}
             print(" New user created.") 
    
     def update_probs(self):

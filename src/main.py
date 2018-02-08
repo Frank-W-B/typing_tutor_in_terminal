@@ -5,6 +5,7 @@ import helpers
 import graphing
 from typist import Typist
 import pdb
+import time
 
 def typing(user):
     """Tests typing on characters accuracy."""
@@ -35,7 +36,7 @@ def typing(user):
             keep_typing = False
         os.system('cls||clear')
 
-def typing_python(user, python):
+def typing_python(user, python_text):
     """Tests typing on Python accuracy."""
     os.system('cls||clear')
     keep_typing = True
@@ -43,30 +44,34 @@ def typing_python(user, python):
         print("\n Typing")
         print("\n Type this Python snippet as fast as reasonably possible.") 
         print(" Do NOT backspace or delete to fix your mistakes.")
-        entries = range(max(python))
+        entries = range(max(python_text))
         num_lines_desired = user.pref['lines_python'] 
         ss_entries = random.sample(entries, 10)
-        lines_code = [line.strip('\n') for e in ss_entries for line in python[e][1]]
-        lines_code = lines_code[:num_lines_desired]
+        code_lines = [line.strip('\n') for entry in ss_entries for line 
+                      in python_text[entry][1]]
+        code_lines = code_lines[:num_lines_desired]
         code = '\n'.join(["{0:3d} ".format(i) + code for i, code in 
-                          enumerate(lines_code, 1)])
+                          enumerate(code_lines, 1)])
         print('\n' + code)
-        num_correct_in_round = []
-        time_for_round = []
-        #for rnd in range(user.pref['num_rounds']):
-        #    print("\n Round {0} of {1}".format(rnd+1, user.pref['num_rounds']))
-        #    number_correct, elapsed_time = helpers.typing_round(user)
-        #    num_correct_in_round.append(number_correct)
-        #    time_for_round.append(elapsed_time)
-        #num_correct_chars = sum(num_correct_in_round)
-        #total_chars = (user.pref['word_length'] * user.pref['num_words'] * 
-        #               user.pref['num_rounds'])
-        #accuracy = num_correct_chars / total_chars * 100
-        #total_time = sum(time_for_round)
-        #chars_per_sec = num_correct_chars / total_time
-        #user.rate.append(chars_per_sec)
-        #user.save()
-        #helpers.show_typing_results(accuracy, chars_per_sec)
+        print("\n Type the code below:\n")
+        typed_lines = []
+        start_time = time.time() 
+        for line in range(1, user.pref['lines_python']+1):
+            raw_inp = input("{0:3d} ".format(line))
+            words_input = raw_inp.lower().lstrip().split(' ') 
+            typed_lines.append(words_input)
+        elapsed_time = time.time() - start_time
+        code_lines_prepared = []
+        for line in code_lines:
+            words_code = line.lower().lstrip().split(' ') 
+            code_lines_prepared.append(words_code)
+        typed_words = helpers.flatten_list(typed_lines)
+        correct_words = helpers.flatten_list(code_lines_prepared)
+        num_correct = helpers.number_correct_chars(user, typed_words, 
+                                                  correct_words)
+        num_chars = helpers.number_chars(correct_words)
+        print(num_correct)
+        print(num_chars)
         entry = input("\n Type again? (y/n): ")
         if entry not in ['y', 'Y']:
             keep_typing = False

@@ -1,10 +1,15 @@
 import time
 import os
 import random
+import pdb
 
 def argsort(seq):
     """Argsort using native Python"""
     return [i for i,v in sorted(enumerate(seq), key = lambda x: x[1])]
+
+def flatten_list(nested_lst):
+    """Flattens a list of lists into a list"""
+    return [lst_item for lst in nested_lst for lst_item in lst]
 
 def make_vocabulary(lst_strings):
     """Makes the characters to type"""
@@ -68,10 +73,18 @@ def get_typing_input(user, line):
             return typed_words, elapsed_time
         print(" Incorrect number of words or word length. Re-enter line.")
 
+def number_chars(words):
+    """Returns the total number of characters in the list of words"""
+    one_word = "".join([word for word in words])
+    return len(one_word)
+
 def number_correct_chars(user, typed_words, words):
     """Determine the number of characters typed correctly."""
     number_correct = 0
     for typed_word, word in zip(typed_words, words):
+        if len(typed_word) < len(word):
+            diff = len(word) - len(typed_word)
+            typed_word += ' ' * diff
         for i, letter in enumerate(word): 
             match = typed_word[i] == letter 
             user.update_count(letter, match)
