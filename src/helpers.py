@@ -56,23 +56,6 @@ def get_practice_char_input():
             return chars
         print(" Incorrect character length. Re-enter line.")
 
-def get_typing_input(user, line):
-    """Returns typing input."""
-    good_input = False
-    while not good_input:
-        print("\n Type the following characters:\n\t{0}".format(line))
-        start_time = time.time() 
-        typed_line = input("\t")
-        elapsed_time = time.time() - start_time
-        typed_words = typed_line.split(" ")
-        num_typed = len(typed_words)
-        wl_typed = list(map(len, typed_words))
-        correct_wls = all([wl == user.pref['word_length'] for wl in wl_typed])
-        good_input = (num_typed == user.pref['num_words'] and correct_wls)
-        if good_input:
-            return typed_words, elapsed_time
-        print(" Incorrect number of words or word length. Re-enter line.")
-
 def number_chars(words):
     """Returns the total number of characters in the list of words"""
     one_word = "".join([word for word in words])
@@ -92,19 +75,6 @@ def number_correct_chars(user, typed_words, words):
                 number_correct += 1
     return number_correct
 
-def typing_round(user):
-    """Return the number characters typed correctly and how long it took."""
-    words = []
-    for _ in range(user.pref['num_words']):
-        words.append("".join(random.choices(user.chars, 
-                                            weights=user.probs, 
-                                            k=user.pref['word_length'])))
-    line = " ".join([word for word in words])
-    typed_words, elapsed_time = get_typing_input(user, line)
-    number_correct = number_correct_chars(user, typed_words, words)
-    user.update_probs()
-    return number_correct, elapsed_time
-
 def show_typing_results(accuracy, chars_per_sec):
     """Displays general typing results."""
     print("\n Results")
@@ -115,7 +85,6 @@ def check_if_all_characters_tested(user):
     """Count the number of characters tested by this user so far."""
     num_tested = sum([1 if v[1] > 0 else 0 for v in user.char_dict.values()])
     return num_tested == len(user.chars)
-
 
 def read_python_code(fname):
     """Reads in Python code and returns a dictionary where key is
