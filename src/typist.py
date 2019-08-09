@@ -10,7 +10,7 @@ class Typist(object):
     ''' 
     def __init__(self, username, chars):
         self.username = username
-        self.filename = Path(''.join(['../users/', username, '.pkl']))
+        self.filename = Path(''.join(['users/', username, '.pkl']))
         self._set_attributes(chars)
 
     def _set_attributes(self, chars):
